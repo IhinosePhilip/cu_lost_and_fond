@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: cu-lost-and-found
+    runtime: node
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: DB_PATH
+        value: /data
+    disk:
+      name: cu-db
+      mountPath: /data
+      sizeGB: 1

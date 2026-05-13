@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CU Lost & Found</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- AUTH PAGE -->
+    <div id="authPage" class="page active">
+      <div class="auth-container">
+        <div class="logo-area">
+          <div class="logo-circle">CU</div>
+          <h1>Covenant University</h1>
+          <p>Lost & Found Portal</p>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('signin')">
+            Sign In
+          </button>
+          <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <!-- SIGN IN -->
+        <div id="signinForm" class="form-section">
+          <div class="form-group">
+            <label>School Email</label>
+            <input
+              type="email"
+              id="signinEmail"
+              placeholder="e.g. pihinose.2303882@stu.cu.edu.ng"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="signinPassword"
+              placeholder="Enter your password"
+            />
+          </div>
+          <div class="form-group">
+            <label>
+              <input type="checkbox" id="adminLogin" /> Login as Admin
+            </label>
+          </div>
+          <button class="btn-primary" onclick="signIn()">Sign In</button>
+          <p id="signinError" class="error-msg"></p>
+        </div>
+
+        <!-- SIGN UP -->
+        <div id="signupForm" class="form-section hidden">
+          <div class="form-group">
+            <label>User Type</label>
+            <select id="userType" onchange="updateEmailHint()">
+              <option value="student">Student</option>
+              <option value="postgrad">Postgraduate</option>
+              <option value="staff">Staff</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="signupFirstName" placeholder="e.g. Philip" />
+          </div>
+          <div class="form-group">
+            <label>Surname</label>
+            <input type="text" id="signupSurname" placeholder="e.g. Ihinose" />
+          </div>
+          <div class="form-group">
+            <label>College</label>
+            <select id="signupCollege" onchange="populateDepartments()">
+              <option value="">-- Select College --</option>
+              <option value="CST">College of Science & Technology (CST)</option>
+              <option value="CENG">College of Engineering (CENG)</option>
+              <option value="CBSS">
+                College of Business & Social Sciences (CBSS)
+              </option>
+              <option value="CLDS">
+                College of Leadership Development Studies (CLDS)
+              </option>
+              <option value="CMMS">
+                College of Medicine & Health Sciences (CMMS)
+              </option>
+              <option value="STAFF">Staff / Administration</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Department</label>
+            <select id="signupDepartment">
+              <option value="">-- Select Department --</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label
+              >School Email
+              <span id="emailHint" class="hint"
+                >(format: firstname.matricno@stu.cu.edu.ng)</span
+              ></label
+            >
+            <input
+              type="email"
+              id="signupEmail"
+              placeholder="e.g. pihinose.2303882@stu.cu.edu.ng"
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="signupPassword"
+              placeholder="Create a password (min 6 chars)"
+            />
+          </div>
+          <div class="form-group">
+            <label>Confirm Password</label>
+            <input
+              type="password"
+              id="signupConfirm"
+              placeholder="Repeat your password"
+            />
+          </div>
+          <button class="btn-primary" onclick="signUp()">Create Account</button>
+          <p id="signupError" class="error-msg"></p>
+          <p id="signupSuccess" class="success-msg"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN APP PAGE -->
+    <div id="appPage" class="page hidden">
+      <nav class="navbar">
+        <div class="nav-brand">
+          <span class="logo-sm">CU</span>
+          <span>Lost &amp; Found</span>
+        </div>
+        <div class="nav-links">
+          <button class="nav-btn active" onclick="showSection('board')">
+            Board
+          </button>
+          <button class="nav-btn" onclick="showSection('report')">
+            Report Item
+          </button>
+          <button class="nav-btn" onclick="showSection('profile')">
+            My Profile
+          </button>
+          <button class="nav-btn logout-btn" onclick="logout()">Logout</button>
+        </div>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+
+      <!-- BOARD SECTION -->
+      <div id="boardSection" class="section active">
+        <div class="section-header">
+          <h2>Lost & Found Board</h2>
+          <div class="filter-bar">
+            <select id="filterStatus" onchange="renderBoard()">
+              <option value="all">All Items</option>
+              <option value="lost">Lost</option>
+              <option value="found">Found</option>
+              <option value="claimed">Claimed</option>
+            </select>
+            <input
+              type="text"
+              id="filterSearch"
+              placeholder="Search items..."
+              oninput="renderBoard()"
+            />
+          </div>
+        </div>
+        <div id="itemsGrid" class="items-grid"></div>
+      </div>
+
+      <!-- REPORT SECTION -->
+      <div id="reportSection" class="section hidden">
+        <div class="section-header">
+          <h2>Report an Item</h2>
+        </div>
+        <div class="form-card">
+          <div class="form-group">
+            <label>Item Type</label>
+            <select id="itemStatus">
+              <option value="lost">I Lost Something</option>
+              <option value="found">I Found Something</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Item Name</label>
+            <input
+              type="text"
+              id="itemName"
+              placeholder="e.g. Black Laptop Bag"
+            />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <select id="itemCategory">
+              <option value="Electronics">Electronics</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Books & Stationery">Books & Stationery</option>
+              <option value="ID / Cards">ID / Cards</option>
+              <option value="Keys">Keys</option>
+              <option value="Bags">Bags</option>
+              <option value="Jewellery">Jewellery</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Location</label>
+            <input
+              type="text"
+              id="itemLocation"
+              placeholder="e.g. CST Building, Library, Cafeteria"
+            />
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea
+              id="itemDescription"
+              rows="3"
+              placeholder="Describe the item in detail..."
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="itemDate" />
+          </div>
+          <div class="form-group">
+            <label>Contact (optional)</label>
+            <input
+              type="text"
+              id="itemContact"
+              placeholder="Phone number or alternate email"
+            />
+          </div>
+          <button class="btn-primary" onclick="submitItem()">
+            Submit Report
+          </button>
+          <p id="reportMsg" class="success-msg"></p>
+        </div>
+      </div>
+
+      <!-- PROFILE SECTION -->
+      <div id="profileSection" class="section hidden">
+        <div class="section-header">
+          <h2>My Profile</h2>
+        </div>
+        <div class="profile-card" id="profileCard"></div>
+        <div class="section-header" style="margin-top: 2rem">
+          <h3>My Reported Items</h3>
+        </div>
+        <div id="myItems" class="items-grid"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN PAGE -->
+    <div id="adminPage" class="page hidden">
+      <nav class="navbar admin-nav">
+        <div class="nav-brand">
+          <span class="logo-sm">CU</span>
+          <span>Admin Dashboard</span>
+        </div>
+        <div class="nav-links">
+          <button class="nav-btn active" onclick="showAdminTab('users')">
+            Users
+          </button>
+          <button class="nav-btn" onclick="showAdminTab('items')">Items</button>
+          <button class="nav-btn" onclick="showAdminTab('logs')">
+            Login Logs
+          </button>
+          <button class="nav-btn logout-btn" onclick="logout()">Logout</button>
+        </div>
+      </nav>
+
+      <div class="admin-content">
+        <!-- USERS TAB -->
+        <div id="adminUsers" class="admin-tab active">
+          <div class="section-header">
+            <h2>Registered Users</h2>
+            <input
+              type="text"
+              id="userSearch"
+              placeholder="Search users..."
+              oninput="renderAdminUsers()"
+            />
+          </div>
+          <div class="table-wrapper">
+            <table id="usersTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Surname</th>
+                  <th>Email</th>
+                  <th>Type</th>
+                  <th>College</th>
+                  <th>Department</th>
+                  <th>Registered</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ITEMS TAB -->
+        <div id="adminItems" class="admin-tab hidden">
+          <div class="section-header">
+            <h2>All Reported Items</h2>
+            <input
+              type="text"
+              id="itemSearch"
+              placeholder="Search items..."
+              oninput="renderAdminItems()"
+            />
+          </div>
+          <div class="table-wrapper">
+            <table id="itemsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Item Name</th>
+                  <th>Status</th>
+                  <th>Category</th>
+                  <th>Location</th>
+                  <th>Reported By</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="itemsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- LOGS TAB -->
+        <div id="adminLogs" class="admin-tab hidden">
+          <div class="section-header">
+            <h2>Login Activity Logs</h2>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Email</th>
+                  <th>Name</th>
+                  <th>Type</th>
+                  <th>Login Time</th>
+                </tr>
+              </thead>
+              <tbody id="logsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ITEM DETAIL MODAL -->
+    <div id="itemModal" class="modal hidden">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeModal()">✕</button>
+        <div id="modalBody"></div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
