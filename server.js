@@ -374,7 +374,7 @@ app.get('/api/admin/stats', adminMiddleware, async (req, res) => {
 });
 
 // Serve frontend for all other routes
-app.get('/{*path}', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
