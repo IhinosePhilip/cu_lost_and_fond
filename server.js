@@ -19,8 +19,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ===== DATABASE SETUP =====
 // On Render, use /data (persistent disk mount). Locally use project root.
 const DB_DIR = process.env.DB_PATH || __dirname;
-if (!fs.existsSync(DB_DIR)) fs.mkdirSync(DB_DIR, { recursive: true });
-const db = new Database(path.join(DB_DIR, 'cu_lostfound.db'));
+try {
+  if (DB_DIR !== __dirname && !fs.existsSync(DB_DIR)) {
+    fs.mkdirSync(DB_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn(`Warning: Could not create DB_PATH "${DB_DIR}", falling back to app directory.`);
+}
+const DB_FILE = fs.existsSync(DB_DIR) ? path.join(DB_DIR, 'cu_lostfound.db') : path.join(__dirname, 'cu_lostfound.db');
+const db = new Database(DB_FILE);
 
 // Enable WAL mode for better performance
 db.pragma('journal_mode = WAL');
