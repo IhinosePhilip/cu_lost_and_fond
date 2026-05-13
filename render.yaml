@@ -11,9 +11,12 @@ services:
         generateValue: true
       - key: ADMIN_PASSWORD
         sync: false
-      - key: DB_PATH
-        value: /data
-    disk:
-      name: cu-db
-      mountPath: /data
-      sizeGB: 1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cu-lostfound-db
+          property: connectionString
+
+databases:
+  - name: cu-lostfound-db
+    databaseName: cu_lostfound
+    user: cu_admin
